@@ -1,10 +1,12 @@
 # Backend
 .env
+.env.production
 *.exe
 *.test
 
 # Frontend
 frontend/.env.local
+frontend/.env.production
 frontend/.next/
 frontend/node_modules/
 
