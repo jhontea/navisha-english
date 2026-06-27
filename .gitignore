@@ -1,0 +1,13 @@
+# Backend
+.env
+*.exe
+*.test
+
+# Frontend
+frontend/.env.local
+frontend/.next/
+frontend/node_modules/
+
+# General
+.DS_Store
+Thumbs.db
