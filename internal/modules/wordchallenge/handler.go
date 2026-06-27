@@ -83,7 +83,21 @@ func (h *Handler) CheckAnswer(c *gin.Context) {
 	})
 }
 
-// GetHistory returns the user's word challenge attempt history
+// ClearHistory deletes all word challenge history for the user
+func (h *Handler) ClearHistory(c *gin.Context) {
+	userID := c.GetString("user_id")
+
+	_, err := h.db.Exec(`
+		DELETE FROM navisha_english_word_challenge_history
+		WHERE user_id = $1`, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear history"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "History cleared"})
+}
+
 func (h *Handler) GetHistory(c *gin.Context) {
 	userID := c.GetString("user_id")
 

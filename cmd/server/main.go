@@ -89,6 +89,7 @@ func main() {
 	protected.GET("/word-challenge/generate", wordChallengeHandler.GenerateSentence)
 	protected.POST("/word-challenge/check", wordChallengeHandler.CheckAnswer)
 	protected.GET("/word-challenge/history", wordChallengeHandler.GetHistory)
+	protected.DELETE("/word-challenge/history", wordChallengeHandler.ClearHistory)
 
 	// Roleplay module
 	roleplayHandler := roleplay.NewHandler(db)

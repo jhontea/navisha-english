@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 import {
   Sparkles, CheckCircle, XCircle, RefreshCw, BookOpen,
-  ChevronRight, Lightbulb, AlertTriangle, ArrowRight, Briefcase
+  ChevronRight, Lightbulb, AlertTriangle, ArrowRight, Briefcase, Trash2
 } from 'lucide-react'
 
 type SentenceData = {
@@ -395,13 +395,56 @@ function ResultState({
 }
 
 function HistoryPanel({ history, onClose }: { history: HistoryItem[]; onClose: () => void }) {
+  const [confirming, setConfirming] = useState(false)
+  const { refetch } = useQuery({ queryKey: ['word-challenge-history'], enabled: false })
+
+  const clearMutation = useMutation({
+    mutationFn: () => api.delete('/word-challenge/history'),
+    onSuccess: () => {
+      toast.success('Riwayat berhasil dihapus.')
+      setConfirming(false)
+      refetch()
+    },
+    onError: () => toast.error('Gagal menghapus riwayat.'),
+  })
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-white font-black text-lg">Riwayat Jawaban</h2>
-        <button onClick={onClose} className="text-white/45 hover:text-white text-sm font-semibold transition-colors">
-          Tutup
-        </button>
+        <div className="flex items-center gap-2">
+          {history.length > 0 && (
+            confirming ? (
+              <div className="flex items-center gap-2">
+                <span className="text-white/45 text-xs font-medium">Hapus semua?</span>
+                <button
+                  onClick={() => clearMutation.mutate()}
+                  disabled={clearMutation.isPending}
+                  className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 text-xs font-bold transition-all disabled:opacity-50"
+                >
+                  {clearMutation.isPending ? <RefreshCw className="w-3 h-3 animate-spin" /> : 'Ya, hapus'}
+                </button>
+                <button
+                  onClick={() => setConfirming(false)}
+                  className="px-3 py-1.5 rounded-lg glass text-white/45 hover:text-white text-xs font-bold transition-all"
+                >
+                  Batal
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirming(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass glass-hover text-white/40 hover:text-red-400 text-xs font-semibold transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                Hapus semua
+              </button>
+            )
+          )}
+          <button onClick={onClose} className="text-white/45 hover:text-white text-sm font-semibold transition-colors">
+            Tutup
+          </button>
+        </div>
       </div>
 
       {history.length === 0 ? (
